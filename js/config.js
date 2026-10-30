@@ -1,7 +1,7 @@
 // PAS-One Configuration
 window.APP_CONFIG = {
   // Apps Script Deployment URL
-  API_BASE_URL: 'https://script.google.com/macros/s/AKfycbwJJt1Nj39xXDRNZ0hc26n7Flvh7uDk7E3zv11keYNQD4OKsbcU4i-nRfk3dP_EtCf7/exec',
+  API_BASE_URL: 'https://pas-one-api.qz57kgqphk.workers.dev',
 
   // Google Sheets
   // Spreadsheet ID hanya disimpan di Apps Script Script Properties, bukan di browser.
