@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAS-One | Prima Auto Servis</title>
+  <link rel="stylesheet" href="css/design-tokens.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <script src="js/config.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- Navigation -->
+    <nav id="navbar" class="navbar">
+      <div class="container">
+        <div class="navbar-brand">
+          <h1>PAS-One</h1>
+        </div>
+        <ul id="navbar-menu" class="navbar-menu">
+          <li><a href="#/catalog">Katalog</a></li>
+          <li><a href="#/cart">Keranjang</a></li>
+          <li><a href="#/emergency">Emergency</a></li>
+          <li id="auth-menu"></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+      <!-- Default: Catalog Page -->
+      <section id="page-catalog" class="page">
+        <div class="container">
+          <h2>Katalog Layanan</h2>
+          <div id="catalog-list" class="catalog-grid">
+            <!-- Dinamis diisi oleh JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Cart Page -->
+      <section id="page-cart" class="page" style="display:none;">
+        <div class="container">
+          <h2>Keranjang</h2>
+          <div id="cart-items"></div>
+          <div id="cart-summary"></div>
+          <button class="btn-primary" id="btn-checkout">Lanjut ke Pembayaran</button>
+        </div>
+      </section>
+
+      <!-- Emergency Page -->
+      <section id="page-emergency" class="page" style="display:none;">
+        <div class="container">
+          <h2>Bantuan Darurat 24/7</h2>
+          <button class="btn-danger btn-large" id="btn-panic">🚨 CALL FOR HELP</button>
+          <div id="emergency-status"></div>
+        </div>
+      </section>
+
+      <!-- Login Page -->
+      <section id="page-login" class="page" style="display:none;">
+        <div class="container">
+          <div class="login-form">
+            <h2>Login</h2>
+            <form id="form-login">
+              <input type="email" placeholder="Email" required>
+              <input type="password" placeholder="Password" required>
+              <button type="submit" class="btn-primary">Login</button>
+              <p><a href="#/register">Belum punya akun? Daftar</a></p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Register Page -->
+      <section id="page-register" class="page" style="display:none;">
+        <div class="container">
+          <div class="login-form">
+            <h2>Daftar</h2>
+            <form id="form-register">
+              <input type="text" placeholder="Nama Lengkap" required>
+              <input type="email" placeholder="Email" required>
+              <input type="password" placeholder="Password" required>
+              <input type="password" placeholder="Konfirmasi Password" required>
+              <button type="submit" class="btn-primary">Daftar</button>
+              <p><a href="#/login">Sudah punya akun? Login</a></p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Admin Dashboard -->
+      <section id="page-admin" class="page" style="display:none;">
+        <div class="container">
+          <h2>Admin Dashboard</h2>
+          <div class="dashboard-grid">
+            <div class="dashboard-card">
+              <h3>Booking Hari Ini</h3>
+              <p class="stat" id="stat-booking-today">0</p>
+            </div>
+            <div class="dashboard-card">
+              <h3>Pembayaran Menunggu</h3>
+              <p class="stat" id="stat-payment-pending">0</p>
+            </div>
+            <div class="dashboard-card">
+              <h3>Pekerjaan Berjalan</h3>
+              <p class="stat" id="stat-work-active">0</p>
+            </div>
+            <div class="dashboard-card">
+              <h3>Emergency</h3>
+              <p class="stat" id="stat-emergency">0</p>
+            </div>
+          </div>
+          <div class="admin-tabs">
+            <button class="tab-btn active" onclick="showTab('tab-orders')">Pesanan</button>
+            <button class="tab-btn" onclick="showTab('tab-payments')">Pembayaran</button>
+            <button class="tab-btn" onclick="showTab('tab-catalog')">Katalog</button>
+            <button class="tab-btn" onclick="showTab('tab-inventory')">Stok</button>
+          </div>
+          <div id="tab-orders" class="tab-content active">
+            <div id="order-list"></div>
+          </div>
+          <div id="tab-payments" class="tab-content">
+            <div id="payment-list"></div>
+          </div>
+          <div id="tab-catalog" class="tab-content">
+            <div class="toolbar">
+              <h3>Manajemen Katalog</h3>
+              <button class="btn-primary" id="btn-add-catalog">+ Tambah Item</button>
+            </div>
+            <div id="catalog-table"></div>
+          </div>
+          <div id="tab-inventory" class="tab-content">
+            <div id="inventory-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mechanic Dashboard -->
+      <section id="page-mechanic" class="page" style="display:none;">
+        <div class="container">
+          <h2>Portal Mekanik</h2>
+          <div id="mechanic-assignments"></div>
+          <div id="mechanic-map"></div>
+        </div>
+      </section>
+
+      <!-- Management Dashboard -->
+      <section id="page-management" class="page" style="display:none;">
+        <div class="container">
+          <h2>Management Dashboard</h2>
+          <div class="dashboard-grid">
+            <div class="dashboard-card">
+              <h3>Revenue Hari Ini</h3>
+              <p class="stat" id="stat-revenue">Rp 0</p>
+            </div>
+            <div class="dashboard-card">
+              <h3>Discount Pending</h3>
+              <p class="stat" id="stat-discount-pending">0</p>
+            </div>
+          </div>
+          <div id="discount-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2026 Prima Auto Servis. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/api/client.js"></script>
+  <script src="js/pages/payment-verification.js"></script>
+  <script src="js/pages/admin-payments.js"></script>
+  <script src="js/pages/admin-orders.js"></script>
+  <script src="js/pages/admin-catalog.js"></script>
+  <script src="js/pages/emergency-calculator.js"></script>
+  <script src="js/pages/catalog-management.js"></script>
+  <script src="js/pages/order-management.js"></script>
+  <script src="js/pages/inventory-management.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

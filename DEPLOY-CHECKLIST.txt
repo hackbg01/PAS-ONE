@@ -1,0 +1,40 @@
+PAS-ONE DEPLOY CHECKLIST
+
+SEBELUM UPLOAD PAGES
+[ ] Extract ZIP
+[ ] Pastikan folder PAS-ONE-DEPLOY berisi index.html, css/, js/
+[ ] Pastikan js/config.js API_BASE_URL menunjuk ke Worker yang benar
+
+CLOUDFLARE PAGES
+[ ] Upload folder PAS-ONE-DEPLOY sebagai assets (bukan ZIP)
+[ ] Simpan domain *.pages.dev yang diberikan
+
+CLOUDFLARE WORKER pas-one-api
+[ ] Replace Worker code dengan worker/worker.js
+[ ] Set GAS_WEB_APP_URL ke URL Apps Script /exec
+[ ] Set ALLOWED_ORIGIN ke domain Pages persis
+[ ] Save and Deploy
+
+GOOGLE APPS SCRIPT
+[ ] Pasang backend/app.gs
+[ ] Pasang backend/InventoryModule.gs
+[ ] Pasang backend/PasswordReset.gs
+[ ] Pasang backend/init-sheets.gs
+[ ] Script Properties: SPREADSHEET_ID dan SECRET_KEY (min. 32 karakter)
+[ ] Jalankan initializeDatabase() hanya pada spreadsheet baru/kosong
+[ ] Jalankan pasInventorySheet() dan setupPasswordResetSheet()
+[ ] Deploy Web App: Execute as Me, access Anyone
+[ ] Update GAS_WEB_APP_URL di Worker
+
+TEST WAJIB
+[ ] GET Worker menunjukkan online
+[ ] Katalog berhasil dibaca dari Sheets
+[ ] Register/login/logout berhasil
+[ ] Order uji masuk ke sheet Orders dan total dihitung dari master Catalog
+[ ] Admin dapat mengelola katalog
+[ ] Uji akses inventory sesuai role
+[ ] Uji email reset password
+[ ] Uji emergency dan audit log
+
+CATATAN
+Paket ini belum menyelesaikan checkout UI, mutasi/import inventory UI, live tracking, payment gateway, dan WhatsApp API. Jangan go-live sebelum fitur yang dibutuhkan sudah diuji dan dilengkapi.
