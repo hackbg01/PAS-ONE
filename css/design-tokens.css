@@ -1,6 +1,6 @@
 :root {
   --color-navy: #1a3a52;
-  --color-navy-light: #2d5a7b;
+  --color-navy-light: #244d6b;
   --color-gold: #d4af37;
   --color-white: #ffffff;
   --color-gray-light: #f5f5f5;
@@ -12,7 +12,7 @@
   --color-danger: #e74c3c;
   --color-info: #3498db;
 
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   --font-size-base: 16px;
   --font-size-sm: 14px;
   --font-size-lg: 18px;
@@ -26,19 +26,20 @@
   --spacing-lg: 24px;
   --spacing-xl: 32px;
 
-  --border-radius-sm: 4px;
+  --border-radius-sm: 6px;
   --border-radius-md: 8px;
   --border-radius-lg: 12px;
 
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.16);
-  --shadow-lg: 0 8px 16px rgba(0,0,0,0.20);
+  /* Subtle Apple-like 3D depth & soft elevation */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
 
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-* {
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -50,17 +51,21 @@ body {
   color: var(--color-text);
   background: var(--color-white);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   margin-bottom: var(--spacing-md);
+  color: var(--color-navy);
+  letter-spacing: -0.01em;
 }
 
 h1 { font-size: var(--font-size-2xl); }
 h2 { font-size: var(--font-size-xl); }
 h3 { font-size: var(--font-size-lg); }
 
+/* Tombol dengan sentuhan 3D lembut dan solid color kelas atas */
 button {
   font-family: inherit;
   cursor: pointer;
@@ -68,7 +73,9 @@ button {
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius-md);
   font-size: var(--font-size-base);
+  font-weight: 500;
   transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary {
@@ -79,6 +86,11 @@ button {
 .btn-primary:hover {
   background: var(--color-navy-light);
   box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-secondary {
@@ -89,29 +101,47 @@ button {
 .btn-secondary:hover {
   background: var(--color-gray-dark);
   color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Input, Textarea, Select dengan fokus bersih ala Apple */
 input, textarea, select {
   font-family: inherit;
   font-size: inherit;
   padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-white);
   border: 1px solid var(--color-gray-medium);
   border-radius: var(--border-radius-md);
   width: 100%;
   max-width: 100%;
+  transition: var(--transition-fast);
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--color-navy);
-  box-shadow: 0 0 0 3px rgba(26, 58, 82, 0.1);
+  box-shadow: 0 0 0 3px rgba(26, 58, 82, 0.12);
 }
 
+/* Layout Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-md);
 }
 
-.btn-small { padding: var(--spacing-xs) var(--spacing-sm); font-size: var(--font-size-sm); }
-.btn-large { padding: var(--spacing-md) var(--spacing-lg); font-size: var(--font-size-lg); }
+/* Tombol Sizing Utuh (Dipertahankan) */
+.btn-small { 
+  padding: var(--spacing-xs) var(--spacing-sm); 
+  font-size: var(--font-size-sm); 
+}
+
+.btn-large { 
+  padding: var(--spacing-md) var(--spacing-lg); 
+  font-size: var(--font-size-lg); 
+}
