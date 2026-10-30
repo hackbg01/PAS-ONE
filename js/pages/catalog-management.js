@@ -1,4 +1,4 @@
-// Catalog Management - Admin Portal
+// Catalog Management - Admin Portal (Apple-Style Clean)
 class CatalogManager {
   constructor() {
     this.items = [];
@@ -27,42 +27,44 @@ class CatalogManager {
     if (!container) return;
 
     if (this.items.length === 0) {
-      container.innerHTML = '<p class="empty-state">Tidak ada item katalog</p>';
+      container.innerHTML = '<div class="empty-state"><p>Tidak ada item katalog</p></div>';
       return;
     }
 
     const html = `
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Nama</th>
-            <th>Kategori</th>
-            <th>Harga</th>
-            <th>Stok</th>
-            <th>Status</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${this.items.map(item => `
+      <div class="table-container apple-table-card">
+        <table class="data-table">
+          <thead>
             <tr>
-              <td>${item.name}</td>
-              <td>${item.category}</td>
-              <td>Rp ${item.price.toLocaleString('id-ID')}</td>
-              <td>${item.stock}</td>
-              <td>
-                <span class="badge ${item.active ? 'badge-active' : 'badge-inactive'}">
-                  ${item.active ? 'Aktif' : 'Nonaktif'}
-                </span>
-              </td>
-              <td>
-                <button class="btn-primary btn-small" onclick="catalogMgr.showEditForm('${item.id}')">Edit</button>
-                <button class="btn-secondary btn-small" onclick="catalogMgr.deleteItem('${item.id}')">Hapus</button>
-              </td>
+              <th>Nama</th>
+              <th>Kategori</th>
+              <th>Harga</th>
+              <th>Stok</th>
+              <th>Status</th>
+              <th style="text-align: right;">Aksi</th>
             </tr>
-          `).join('')}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            ${this.items.map(item => `
+              <tr>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.category}</td>
+                <td>Rp ${Number(item.price || 0).toLocaleString('id-ID')}</td>
+                <td>${item.stock}</td>
+                <td>
+                  <span class="badge ${item.active ? 'badge-active' : 'badge-inactive'}">
+                    ${item.active ? 'Aktif' : 'Nonaktif'}
+                  </span>
+                </td>
+                <td style="text-align: right; white-space: nowrap;">
+                  <button class="btn-primary btn-small" onclick="catalogMgr.showEditForm('${item.id}')">Edit</button>
+                  <button class="btn-secondary btn-small" onclick="catalogMgr.deleteItem('${item.id}')">Hapus</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
     `;
 
     container.innerHTML = html;
@@ -84,10 +86,10 @@ class CatalogManager {
 
     const formHtml = `
       <div class="modal-overlay" onclick="catalogMgr.closeModal()">
-        <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal apple-modal" onclick="event.stopPropagation()">
           <div class="modal-header">
             <h3>${title}</h3>
-            <button class="btn-close" onclick="catalogMgr.closeModal()">×</button>
+            <button class="btn-close" onclick="catalogMgr.closeModal()">&times;</button>
           </div>
           <form id="catalog-form" onsubmit="catalogMgr.submitForm(event)">
             <div class="form-group">
@@ -123,15 +125,13 @@ class CatalogManager {
               </div>
             </div>
 
-            <div class="form-group">
-              <label>
-                <input type="checkbox" name="active" ${item?.active ? 'checked' : ''}>
-                Item Aktif
-              </label>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" name="active" id="active-check" style="width: auto;" ${item?.active ? 'checked' : ''}>
+              <label for="active-check" style="margin-bottom: 0; cursor: pointer;">Item Aktif</label>
             </div>
 
-            <div class="form-actions">
-              <button type="submit" class="btn-primary">${item ? 'Simpan Perubahan' : 'Tambah Item'}</button>
+            <div class="form-actions" style="margin-top: 24px;">
+              <button type="submit" class="btn-success">${item ? 'Simpan Perubahan' : 'Tambah Item'}</button>
               <button type="button" class="btn-secondary" onclick="catalogMgr.closeModal()">Batal</button>
             </div>
           </form>
@@ -139,9 +139,13 @@ class CatalogManager {
       </div>
     `;
 
-    const modal = document.createElement('div');
-    modal.innerHTML = formHtml;
-    document.body.appendChild(modal);
+    // Hapus modal lama jika ada agar tidak menumpuk
+    this.closeModal();
+
+    const modalContainer = document.createElement('div');
+    modalContainer.id = 'dynamic-catalog-modal';
+    modalContainer.innerHTML = formHtml;
+    document.body.appendChild(modalContainer);
   }
 
   async submitForm(event) {
@@ -161,13 +165,13 @@ class CatalogManager {
         ? await window.api.updateCatalogItem(this.editingId, data)
         : await window.api.createCatalogItem(data);
 
-      if (response.success) {
-        app.showNotification(this.editingId ? 'Item diupdate' : 'Item ditambah');
+      if (response && (response.success || response.id)) {
+        app.showNotification(this.editingId ? 'Item berhasil diupdate' : 'Item berhasil ditambah');
         this.closeModal();
         await this.loadCatalog();
         this.renderCatalogTable();
       } else {
-        app.showNotification('Gagal: ' + response.error, 'error');
+        app.showNotification('Gagal: ' + (response.error || 'Unknown error'), 'error');
       }
     } catch (error) {
       app.showNotification('Error: ' + error.message, 'error');
@@ -179,10 +183,12 @@ class CatalogManager {
 
     try {
       const response = await window.api.deleteCatalogItem(id);
-      if (response.success) {
-        app.showNotification('Item dihapus');
+      if (response && response.success) {
+        app.showNotification('Item berhasil dihapus');
         await this.loadCatalog();
         this.renderCatalogTable();
+      } else {
+        app.showNotification('Gagal menghapus item', 'error');
       }
     } catch (error) {
       app.showNotification('Error: ' + error.message, 'error');
@@ -190,7 +196,7 @@ class CatalogManager {
   }
 
   closeModal() {
-    const modal = document.querySelector('.modal-overlay');
+    const modal = document.getElementById('dynamic-catalog-modal');
     if (modal) modal.remove();
   }
 
