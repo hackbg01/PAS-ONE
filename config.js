@@ -1,7 +1,7 @@
 // PAS-One Configuration
 window.APP_CONFIG = {
   // Apps Script Deployment URL
-  API_BASE_URL: 'https://pas-one-api.qz57kgqphk.workers.dev',
+  API_BASE_URL: 'https://script.google.com/macros/s/AKfycbwJJt1Nj39xXDRNZ0hc26n7Flvh7uDk7E3zv11keYNQD4OKsbcU4i-nRfk3dP_EtCf7/exec',
 
   // Google Sheets
   // Spreadsheet ID hanya disimpan di Apps Script Script Properties, bukan di browser.
@@ -12,8 +12,8 @@ window.APP_CONFIG = {
   BASE_LOCATION_LNG: 104.758,
 
   // Emergency Settings
-  EMERGENCY_PHONE: '+62812345678',
-  EMERGENCY_WHATSAPP: '+62812345678',
+  EMERGENCY_PHONE: '+628138181128',
+  EMERGENCY_WHATSAPP: '+628138181128',
 
   // Service Hours (24-hour format)
   NORMAL_HOURS_START: 6,   // 06:00
@@ -21,7 +21,7 @@ window.APP_CONFIG = {
   TIMEZONE: 'Asia/Jakarta',
 
   // Service Fees (in Rp)
-  FREE_RADIUS_KM: 30,
+  FREE_RADIUS_KM: 20,
   DISTANCE_OVERAGE_FEE: 10000,      // per km over 30km
   GUEST_VISIT_FEE: 250000,
   OFF_HOURS_VISIT_FEE: 250000,
