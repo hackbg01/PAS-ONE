@@ -1,4 +1,4 @@
-// Inventory Management - Admin Portal
+// Inventory Management - Admin Portal (Apple-Style Clean)
 class InventoryManager {
   constructor() {
     this.items = [];
@@ -26,56 +26,63 @@ class InventoryManager {
     if (!container) return;
 
     if (this.items.length === 0) {
-      container.innerHTML = '<p class="empty-state">Tidak ada parts</p>';
+      container.innerHTML = '<div class="empty-state"><p>Tidak ada parts</p></div>';
       return;
     }
 
     const html = `
-      <div class="toolbar">
-        <h3>Inventory Parts</h3>
-        <button class="btn-primary" id="btn-add-part">+ Tambah Part</button>
-        <button class="btn-secondary" id="btn-import-csv">📥 Import CSV</button>
-      </div>
+      <div class="apple-admin-wrapper">
+        <div class="toolbar" style="margin-bottom: 20px;">
+          <div>
+            <h2>Inventory Parts</h2>
+            <p class="section-subtitle">Kelola stok, mutasi, dan inventaris suku cadang.</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-primary" id="btn-add-part">+ Tambah Part</button>
+            <button class="btn-secondary" id="btn-import-csv">📥 Import CSV</button>
+          </div>
+        </div>
 
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Nama Part</th>
-              <th>Kategori</th>
-              <th>Unit</th>
-              <th>Stok</th>
-              <th>Min Stock</th>
-              <th>Harga Satuan</th>
-              <th>Status</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${this.items.map(item => {
-              const lowStock = item.quantity < item.minStock;
-              return `
-                <tr style="${lowStock ? 'background: #fff3cd;' : ''}">
-                  <td><strong>${item.name}</strong></td>
-                  <td>${item.category}</td>
-                  <td>${item.unit}</td>
-                  <td>${item.quantity}</td>
-                  <td>${item.minStock}</td>
-                  <td>Rp ${item.price.toLocaleString('id-ID')}</td>
-                  <td>
-                    <span class="status-badge ${lowStock ? 'status-pending' : 'status-active'}">
-                      ${lowStock ? 'STOK RENDAH' : 'OK'}
-                    </span>
-                  </td>
-                  <td>
-                    <button class="btn-primary btn-small" onclick="inventoryMgr.showPartDetail('${item.id}')">Edit</button>
-                    <button class="btn-secondary btn-small" onclick="inventoryMgr.showMutationForm('${item.id}')">Mutasi</button>
-                  </td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
+        <div class="table-container apple-table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nama Part</th>
+                <th>Kategori</th>
+                <th>Unit</th>
+                <th>Stok</th>
+                <th>Min Stock</th>
+                <th>Harga Satuan</th>
+                <th>Status</th>
+                <th style="text-align: right;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${this.items.map(item => {
+                const lowStock = item.quantity < item.minStock;
+                return `
+                  <tr style="${lowStock ? 'background: #fff8ec;' : ''}">
+                    <td><strong>${item.name}</strong></td>
+                    <td>${item.category}</td>
+                    <td>${item.unit}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.minStock}</td>
+                    <td>Rp ${Number(item.price || 0).toLocaleString('id-ID')}</td>
+                    <td>
+                      <span class="status-badge ${lowStock ? 'status-pending' : 'status-active'}">
+                        ${lowStock ? 'STOK RENDAH' : 'OK'}
+                      </span>
+                    </td>
+                    <td style="text-align: right; white-space: nowrap;">
+                      <button class="btn-primary btn-small" onclick="inventoryMgr.showPartDetail('${item.id}')">Edit</button>
+                      <button class="btn-secondary btn-small" onclick="inventoryMgr.showMutationForm('${item.id}')">Mutasi</button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
       </div>
     `;
 
@@ -92,10 +99,10 @@ class InventoryManager {
 
     const formHtml = `
       <div class="modal-overlay" onclick="inventoryMgr.closeModal()">
-        <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal apple-modal" onclick="event.stopPropagation()">
           <div class="modal-header">
             <h3>${title}</h3>
-            <button class="btn-close" onclick="inventoryMgr.closeModal()">×</button>
+            <button class="btn-close" onclick="inventoryMgr.closeModal()">&times;</button>
           </div>
           <form id="part-form" onsubmit="inventoryMgr.submitPartForm(event)">
             <div class="form-group">
@@ -146,8 +153,8 @@ class InventoryManager {
               <input type="text" name="supplier" value="${part?.supplier || ''}">
             </div>
 
-            <div class="form-actions">
-              <button type="submit" class="btn-primary">${part ? 'Simpan Perubahan' : 'Tambah Part'}</button>
+            <div class="form-actions" style="margin-top: 24px;">
+              <button type="submit" class="btn-success">${part ? 'Simpan Perubahan' : 'Tambah Part'}</button>
               <button type="button" class="btn-secondary" onclick="inventoryMgr.closeModal()">Batal</button>
             </div>
           </form>
@@ -155,24 +162,27 @@ class InventoryManager {
       </div>
     `;
 
+    this.closeModal();
     const modal = document.createElement('div');
+    modal.id = 'dynamic-inventory-modal';
     modal.innerHTML = formHtml;
     document.body.appendChild(modal);
   }
 
   showMutationForm(partId) {
     const part = this.items.find(p => p.id === partId);
+    if (!part) return;
 
     const formHtml = `
       <div class="modal-overlay" onclick="inventoryMgr.closeModal()">
-        <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal apple-modal" onclick="event.stopPropagation()">
           <div class="modal-header">
             <h3>Mutasi Stok: ${part.name}</h3>
-            <button class="btn-close" onclick="inventoryMgr.closeModal()">×</button>
+            <button class="btn-close" onclick="inventoryMgr.closeModal()">&times;</button>
           </div>
 
-          <div style="background: #f0f0f0; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-            <p><strong>Stok Saat Ini:</strong> ${part.quantity} ${part.unit}</p>
+          <div class="apple-summary-box" style="margin-bottom: 16px;">
+            <p style="margin: 0;"><strong>Stok Saat Ini:</strong> ${part.quantity} ${part.unit}</p>
           </div>
 
           <form id="mutation-form" onsubmit="inventoryMgr.submitMutation(event, '${partId}')">
@@ -211,8 +221,8 @@ class InventoryManager {
               <textarea name="notes" rows="2" placeholder="Catatan tambahan (opsional)"></textarea>
             </div>
 
-            <div class="form-actions">
-              <button type="submit" class="btn-primary">Proses Mutasi</button>
+            <div class="form-actions" style="margin-top: 24px;">
+              <button type="submit" class="btn-success">Proses Mutasi</button>
               <button type="button" class="btn-secondary" onclick="inventoryMgr.closeModal()">Batal</button>
             </div>
           </form>
@@ -220,7 +230,9 @@ class InventoryManager {
       </div>
     `;
 
+    this.closeModal();
     const modal = document.createElement('div');
+    modal.id = 'dynamic-inventory-modal';
     modal.innerHTML = formHtml;
     document.body.appendChild(modal);
   }
@@ -228,29 +240,27 @@ class InventoryManager {
   showImportForm() {
     const formHtml = `
       <div class="modal-overlay" onclick="inventoryMgr.closeModal()">
-        <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal apple-modal" onclick="event.stopPropagation()">
           <div class="modal-header">
             <h3>Import Parts dari CSV</h3>
-            <button class="btn-close" onclick="inventoryMgr.closeModal()">×</button>
+            <button class="btn-close" onclick="inventoryMgr.closeModal()">&times;</button>
           </div>
 
-          <p style="margin-bottom: 15px;">Format CSV: name,category,unit,quantity,minStock,price,supplier</p>
+          <p style="margin-bottom: 16px; font-size: 13px; color: var(--color-gray-dark);">Format CSV: name, category, unit, quantity, minStock, price, supplier</p>
 
           <form id="import-form" onsubmit="inventoryMgr.submitImport(event)">
             <div class="form-group">
               <label>Pilih File CSV</label>
-              <input type="file" name="csvFile" accept=".csv" required>
+              <input type="file" name="csvFile" accept=".csv" required style="padding: 6px;">
             </div>
 
-            <div class="form-group">
-              <label>
-                <input type="checkbox" name="overwrite">
-                Overwrite existing parts
-              </label>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" name="overwrite" id="overwrite-check" style="width: auto;">
+              <label for="overwrite-check" style="margin-bottom: 0; cursor: pointer;">Overwrite existing parts</label>
             </div>
 
-            <div class="form-actions">
-              <button type="submit" class="btn-primary">Import</button>
+            <div class="form-actions" style="margin-top: 24px;">
+              <button type="submit" class="btn-success">Import</button>
               <button type="button" class="btn-secondary" onclick="inventoryMgr.closeModal()">Batal</button>
             </div>
           </form>
@@ -258,23 +268,21 @@ class InventoryManager {
       </div>
     `;
 
+    this.closeModal();
     const modal = document.createElement('div');
+    modal.id = 'dynamic-inventory-modal';
     modal.innerHTML = formHtml;
     document.body.appendChild(modal);
   }
 
   async submitPartForm(event) {
     event.preventDefault();
-    const form = event.target;
-    // TODO: Submit to backend
     app.showNotification('Feature akan dilengkapi');
     this.closeModal();
   }
 
   async submitMutation(event, partId) {
     event.preventDefault();
-    const form = event.target;
-    // TODO: Submit mutation to backend
     app.showNotification('Mutasi berhasil diproses');
     this.closeModal();
     await this.loadInventory();
@@ -283,7 +291,6 @@ class InventoryManager {
 
   async submitImport(event) {
     event.preventDefault();
-    // TODO: Process CSV import
     app.showNotification('Import berhasil');
     this.closeModal();
     await this.loadInventory();
@@ -295,7 +302,7 @@ class InventoryManager {
   }
 
   closeModal() {
-    const modal = document.querySelector('.modal-overlay');
+    const modal = document.getElementById('dynamic-inventory-modal');
     if (modal) modal.remove();
   }
 
