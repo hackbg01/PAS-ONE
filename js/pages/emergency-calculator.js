@@ -1,4 +1,4 @@
-// Emergency Cost Calculator
+// Emergency Cost Calculator (Clean & Unaltered Logic)
 class EmergencyCostCalculator {
   constructor() {
     this.config = window.APP_CONFIG;
