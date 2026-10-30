@@ -1,4 +1,4 @@
-// Order Management - Admin Portal
+// Order Management - Admin Portal (Apple-Style Clean)
 class OrderManager {
   constructor() {
     this.orders = [];
@@ -27,12 +27,12 @@ class OrderManager {
     if (!container) return;
 
     if (this.orders.length === 0) {
-      container.innerHTML = '<p class="empty-state">Tidak ada order</p>';
+      container.innerHTML = '<div class="empty-state"><p>Tidak ada order</p></div>';
       return;
     }
 
     const html = `
-      <div class="table-container">
+      <div class="table-container apple-table-card">
         <table class="data-table">
           <thead>
             <tr>
@@ -42,7 +42,7 @@ class OrderManager {
               <th>Order Status</th>
               <th>Payment Status</th>
               <th>Tanggal</th>
-              <th>Aksi</th>
+              <th style="text-align: right;">Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -50,7 +50,7 @@ class OrderManager {
               <tr>
                 <td><strong>${order.orderId}</strong></td>
                 <td>${order.customerData?.name || 'Guest'}</td>
-                <td>Rp ${order.total.toLocaleString('id-ID')}</td>
+                <td>Rp ${Number(order.total || 0).toLocaleString('id-ID')}</td>
                 <td>
                   <span class="status-badge status-${order.orderStatus}">
                     ${this.formatStatus(order.orderStatus)}
@@ -62,7 +62,7 @@ class OrderManager {
                   </span>
                 </td>
                 <td>${new Date(order.createdAt).toLocaleDateString('id-ID')}</td>
-                <td>
+                <td style="text-align: right; white-space: nowrap;">
                   <button class="btn-primary btn-small" onclick="orderMgr.showOrderDetail('${order.orderId}')">
                     Detail
                   </button>
@@ -99,35 +99,35 @@ class OrderManager {
       }
 
       const order = data.order;
-      const itemsHtml = order.items.map(item => `
+      const itemsHtml = (order.items || []).map(item => `
         <tr>
           <td>${item.name}</td>
           <td>${item.quantity}</td>
-          <td>Rp ${item.price.toLocaleString('id-ID')}</td>
-          <td>Rp ${(item.quantity * item.price).toLocaleString('id-ID')}</td>
+          <td>Rp ${Number(item.price || 0).toLocaleString('id-ID')}</td>
+          <td>Rp ${Number((item.quantity || 0) * (item.price || 0)).toLocaleString('id-ID')}</td>
         </tr>
       `).join('');
 
       const modalHtml = `
         <div class="modal-overlay" onclick="orderMgr.closeModal()">
-          <div class="modal" onclick="event.stopPropagation()">
+          <div class="modal apple-modal" onclick="event.stopPropagation()">
             <div class="modal-header">
               <h3>Detail Order #${orderId}</h3>
-              <button class="btn-close" onclick="orderMgr.closeModal()">×</button>
+              <button class="btn-close" onclick="orderMgr.closeModal()">&times;</button>
             </div>
 
-            <div class="form-group">
-              <label>Customer</label>
-              <p>${order.customerData?.name || 'Guest'}</p>
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label style="color: var(--color-gray-dark); font-size: 13px;">Customer</label>
+              <p style="font-weight: 500; color: var(--color-text);">${order.customerData?.name || 'Guest'}</p>
             </div>
 
-            <div class="form-group">
-              <label>Kontak</label>
-              <p>${order.customerData?.phone || 'N/A'} | ${order.customerData?.email || 'N/A'}</p>
+            <div class="form-group" style="margin-bottom: 16px;">
+              <label style="color: var(--color-gray-dark); font-size: 13px;">Kontak</label>
+              <p style="color: var(--color-text);">${order.customerData?.phone || 'N/A'} | ${order.customerData?.email || 'N/A'}</p>
             </div>
 
-            <h4 style="margin-top: 20px; margin-bottom: 10px;">Items</h4>
-            <div class="table-container">
+            <h4 style="margin-top: 20px; margin-bottom: 10px; font-size: 15px; font-weight: 600;">Items</h4>
+            <div class="table-container" style="margin-bottom: 16px;">
               <table class="data-table">
                 <thead>
                   <tr>
@@ -146,22 +146,21 @@ class OrderManager {
             <div class="cost-summary">
               <div class="cost-item">
                 <span>Subtotal:</span>
-                <span>Rp ${order.subtotal.toLocaleString('id-ID')}</span>
+                <span>Rp ${Number(order.subtotal || 0).toLocaleString('id-ID')}</span>
               </div>
               <div class="cost-item">
                 <span>Pajak (10%):</span>
-                <span>Rp ${order.tax.toLocaleString('id-ID')}</span>
+                <span>Rp ${Number(order.tax || 0).toLocaleString('id-ID')}</span>
               </div>
               <div class="cost-total">
                 <span>Total:</span>
-                <span class="total-amount">Rp ${order.total.toLocaleString('id-ID')}</span>
+                <span class="total-amount">Rp ${Number(order.total || 0).toLocaleString('id-ID')}</span>
               </div>
             </div>
 
-            <h4 style="margin-top: 20px; margin-bottom: 10px;">Update Status</h4>
-            <div class="form-group">
-              <label>Order Status</label>
-              <select id="order-status-select">
+            <div class="form-group" style="margin-top: 20px;">
+              <label>Update Status Order</label>
+              <select id="order-status-select" style="margin-top: 4px;">
                 <option value="draft" ${order.orderStatus === 'draft' ? 'selected' : ''}>Draft</option>
                 <option value="pending_payment" ${order.orderStatus === 'pending_payment' ? 'selected' : ''}>Menunggu Pembayaran</option>
                 <option value="payment_verified" ${order.orderStatus === 'payment_verified' ? 'selected' : ''}>Pembayaran Terverifikasi</option>
@@ -171,17 +170,21 @@ class OrderManager {
               </select>
             </div>
 
-            <div class="form-actions">
-              <button class="btn-primary" onclick="orderMgr.updateOrderStatus('${orderId}')">Simpan Status</button>
+            <div class="form-actions" style="margin-top: 24px;">
+              <button class="btn-success" onclick="orderMgr.updateOrderStatus('${orderId}')">Simpan Status</button>
               <button class="btn-secondary" onclick="orderMgr.closeModal()">Tutup</button>
             </div>
           </div>
         </div>
       `;
 
-      const modal = document.createElement('div');
-      modal.innerHTML = modalHtml;
-      document.body.appendChild(modal);
+      // Hapus modal lama jika ada
+      this.closeModal();
+
+      const modalContainer = document.createElement('div');
+      modalContainer.id = 'dynamic-order-detail-modal';
+      modalContainer.innerHTML = modalHtml;
+      document.body.appendChild(modalContainer);
     } catch (error) {
       app.showNotification('Error: ' + error.message, 'error');
     }
@@ -189,15 +192,18 @@ class OrderManager {
 
   async updateOrderStatus(orderId) {
     const statusSelect = document.getElementById('order-status-select');
+    if (!statusSelect) return;
     const newStatus = statusSelect.value;
 
     try {
       const response = await window.api.updateOrderStatus(orderId, newStatus);
-      if (response.success) {
+      if (response && response.success) {
         app.showNotification('Status order diupdate');
         this.closeModal();
         await this.loadOrders();
         this.renderOrderList();
+      } else {
+        app.showNotification('Gagal memperbarui status', 'error');
       }
     } catch (error) {
       app.showNotification('Error: ' + error.message, 'error');
@@ -205,8 +211,10 @@ class OrderManager {
   }
 
   closeModal() {
-    const modal = document.querySelector('.modal-overlay');
+    const modal = document.getElementById('dynamic-order-detail-modal');
     if (modal) modal.remove();
+    const overlay = document.querySelector('.modal-overlay');
+    if (overlay) overlay.remove();
   }
 
   attachEventListeners() {
